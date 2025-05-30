@@ -1,2 +1,3 @@
-# .gitignore (στο root του project)
+# .gitignore 
 .env
+.git/
