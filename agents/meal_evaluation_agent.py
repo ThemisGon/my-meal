@@ -1,8 +1,9 @@
 import re
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
+from langchain_ollama import OllamaLLM
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.exceptions import OutputParserException
 from pydantic import BaseModel
 from my_meal.agents.user_profile_agent import UserProfile
 from my_meal.tools.calories_calculator import get_calories_for_item
@@ -25,12 +26,14 @@ template = ChatPromptTemplate.from_messages([
 
         Return structured output using ONLY the following format:
         {format_instructions}
+        Always include a non-empty "suggestion" field, even if it's just a healthy eating tip or reinforcement of good habits.
      """),
     ("human", "{input}")
 ])
 
-llm = Ollama(model="llama3")
-chain = LLMChain(llm=llm, prompt=template)
+llm = OllamaLLM(model="llama3")
+
+chain = template | llm | parser
 
 
 def estimate_total_calories(meal_plan_text: str) -> float:
@@ -63,5 +66,8 @@ def evaluate_meal_plan(profile: UserProfile, meal_plan: str) -> EvaluationRespon
         f"- Plan Scope: {profile.plan_scope}\n\n"
         f"-- MEAL PLAN --\n{meal_plan}"
     )
-    result = chain.invoke({"input": prompt})
-    return parser.parse(result["text"])
+
+    result = chain.invoke({"input": prompt})  # result είναι ήδη EvaluationResponse
+    if not isinstance(result, EvaluationResponse):
+        raise TypeError(f"⚠️ Το evaluation δεν είναι EvaluationResponse. Πήραμε: {type(result)}")
+    return result

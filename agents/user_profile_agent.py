@@ -1,13 +1,12 @@
-from langchain_core.pydantic_v1 import BaseModel
+from pydantic import BaseModel
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
+from langchain_ollama import OllamaLLM
+from langchain_core.output_parsers import StrOutputParser
 import json
 from langchain_core.output_parsers import StrOutputParser
 from typing import List
-from pydantic import BaseModel
 
-llm = Ollama(model="llama3")
+llm = OllamaLLM(model="llama3")
 
 class UserProfile(BaseModel):
     goal: str
@@ -24,12 +23,13 @@ template = ChatPromptTemplate.from_messages([
 ),
     ("human", "{input}")
 ])
-
-chain = LLMChain(llm=llm, prompt=template)
+parser = StrOutputParser()
+chain = template | llm | parser
 
 def get_user_profile(user_input: str) -> UserProfile:
     response = chain.invoke({"input": user_input})
-    raw_text = response["text"]
+    raw_text = response
+    print("🧠 RAW LLM OUTPUT:\n", raw_text)
 
     import re, json
 

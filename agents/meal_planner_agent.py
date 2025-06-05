@@ -1,10 +1,12 @@
-from langchain_core.pydantic_v1 import BaseModel
+from pydantic import BaseModel
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
+from langchain_ollama import OllamaLLM
+from langchain_core.output_parsers import StrOutputParser
 from my_meal.agents.user_profile_agent import UserProfile
 from my_meal.tools.calories_calculator import get_calories_for_item
 from datetime import datetime
+
+llm = OllamaLLM(model="llama3")
 
 # Prompt για όλους τους τύπους πλάνου
 template = ChatPromptTemplate.from_messages([
@@ -16,11 +18,9 @@ template = ChatPromptTemplate.from_messages([
     ("human", "{input}")
 ])
 
+parser = StrOutputParser()
 # Σύνδεση με το LLM
-llm = Ollama(model="llama3")  # Πρόσθεσε αυτή τη γραμμή πριν το chain
-
-# Σύνδεση με το LLM
-chain = LLMChain(llm=llm, prompt=template)
+chain = template | llm | parser
 
 def get_time_of_day():
     hour = datetime.now().hour
@@ -75,4 +75,4 @@ def generate_meal_or_plan(profile: UserProfile) -> str:
         return "ERROR: Unrecognized plan scope."
 
     result = chain.invoke({"input": user_prompt})
-    return result["text"]
+    return str(result)
