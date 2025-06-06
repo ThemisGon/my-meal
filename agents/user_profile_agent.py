@@ -1,8 +1,9 @@
+import re, json
+
 from pydantic import BaseModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama import OllamaLLM
 from langchain_core.output_parsers import StrOutputParser
-import json
 from langchain_core.output_parsers import StrOutputParser
 from typing import List
 
@@ -29,20 +30,17 @@ chain = template | llm | parser
 def get_user_profile(user_input: str) -> UserProfile:
     response = chain.invoke({"input": user_input})
     raw_text = response
-    print("🧠 RAW LLM OUTPUT:\n", raw_text)
-
-    import re, json
+    print("RAW LLM OUTPUT:\n", raw_text)
 
     # Βρες το JSON block
     match = re.search(r"\{.*\}", raw_text, re.DOTALL)
     if not match:
-        print("⚠️ Δεν βρέθηκε JSON:\n", raw_text)
+        print("Δεν βρέθηκε JSON:\n", raw_text)
         raise ValueError("Το LLM δεν επέστρεψε σωστό JSON")
 
     json_str = match.group()
     profile_dict = json.loads(json_str)
 
-    # ✅ Βάλε εδώ το μπλοκ ελέγχου:
     required_fields = ["goal", "calories_target", "allergies", "preferences", "time_of_day", "plan_scope", "activity_level"]
     for field in required_fields:
         if field not in profile_dict:

@@ -1,7 +1,8 @@
 langchain
-wikipedia
 langchain-community
-langchain-openai
-langchain-anthropic
+langchain-core
+langchain-ollama
 python-dotenv
 pydantic
+tk
+requests

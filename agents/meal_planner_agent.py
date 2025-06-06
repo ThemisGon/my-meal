@@ -8,7 +8,6 @@ from datetime import datetime
 
 llm = OllamaLLM(model="llama3")
 
-# Prompt για όλους τους τύπους πλάνου
 template = ChatPromptTemplate.from_messages([
     ("system", 
         """You are a professional nutritionist that creates personalized meal plans or single meals.
@@ -19,7 +18,7 @@ template = ChatPromptTemplate.from_messages([
 ])
 
 parser = StrOutputParser()
-# Σύνδεση με το LLM
+
 chain = template | llm | parser
 
 def get_time_of_day():
@@ -33,7 +32,6 @@ def get_time_of_day():
     else:
         return "dinner"
 
-# Επιλογή είδους πλάνου με βάση το profile
 def generate_meal_or_plan(profile: UserProfile) -> str:
     profile_info = (
         f"Goal: {profile.goal}\n"
@@ -43,13 +41,11 @@ def generate_meal_or_plan(profile: UserProfile) -> str:
         f"Activity level: {profile.activity_level}."
     )
 
-     # Προειδοποίηση για πολύ χαμηλές θερμίδες
     calorie_warning = ""
     if int(profile.calories_target) < 200:
-        calorie_warning = f"⚠️ WARNING: The calorie target is intentionally very low ({profile.calories_target}). Do not assume it's a typo.\n\n"
+        calorie_warning = f"WARNING: The calorie target is intentionally very low ({profile.calories_target}). Do not assume it's a typo.\n\n"
 
     if profile.plan_scope == "next meal":
-        # Υπολογίζουμε αυτόματα την ώρα
         time_of_day = get_time_of_day()
         user_prompt = (
             calorie_warning +
@@ -62,6 +58,7 @@ def generate_meal_or_plan(profile: UserProfile) -> str:
             calorie_warning +
             f"Create a one-day meal plan (breakfast, lunch, snack, dinner) for:\n"
             f"{profile_info}"
+            f"Remember the allergies of the user and give them special care. Do not include any allergens in the meal plan."
         )
 
     elif profile.plan_scope == "month":
@@ -69,6 +66,7 @@ def generate_meal_or_plan(profile: UserProfile) -> str:
             calorie_warning +
             f"Create a 30-day monthly meal plan. Each day should have breakfast, lunch, snack, and dinner.\n"
             f"Ensure nutritional balance. Profile info:\n{profile_info}"
+            f"Remember the allergies of the user and give them special care. Do not include any allergens in the meal plan."
         )
 
     else:
