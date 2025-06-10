@@ -32,9 +32,9 @@ template = ChatPromptTemplate.from_messages([
         - If the allergy is "chicken", grilled chicken, chicken salad, and turkey are also forbidden.
         - If the allergy is "legumes", lentils and chickpeas are included.
 
-        ❗ The same logic applies to **any other allergy** the user specifies. Always avoid **direct and indirect forms**, **derivatives**, and **cooked variations** of all allergens.
+        The same logic applies to **any other allergy** the user specifies. Always avoid **direct and indirect forms**, **derivatives**, and **cooked variations** of all allergens.
 
-        ⚠️ In long outputs (like monthly plans), make sure to repeat the user's allergies and preferences at the start of each week to prevent mistakes.
+        In long outputs (like monthly plans), make sure to repeat the user's allergies and preferences at the start of each week to prevent mistakes.
 
         Return a valid JSON object in the following format:
         {format_instructions}
