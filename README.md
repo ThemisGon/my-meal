@@ -35,4 +35,4 @@ The system is composed of multiple collaborative agents and tools working in a s
 | `IngredientExtractorTool` | Extracts potential ingredients from meal plan text using regular expressions               |
 
 ## Flow Overview
-image
+![Image](https://github.com/user-attachments/assets/c3455a5a-86cb-4029-941d-90ac5408292f)
