@@ -16,4 +16,23 @@
 
 ---
 
-## 🧱 Architecture (Multi-Agent System)
+## Architecture (Multi-Agent System)
+The system is composed of multiple collaborative agents and tools working in a structured agentic workflow:
+### Agents
+
+| Agent Name             | Role                                                                 |
+|------------------------|----------------------------------------------------------------------|
+| `UserProfileAgent`     | Extracts structured user information (goals, allergies, preferences, etc.) from free-form text   |
+| `MealPlannerAgent`     | Generates a meal plan based on user profile and selected plan scope (meal/day/month)             |
+| `MealEvaluationAgent`  | Evaluates the generated meal plan against user constraints and offers feedback/suggestions   |
+| `EnhancedDetectionAgent` | Scans the plan for allergenic ingredients using text parsing and cross-checking        |
+
+### Tools
+
+| Tool Name              | Function                                                              |
+|------------------------|----------------------------------------------------------------------|
+| `CaloriesCalculator`   | Uses Nutritionix API to estimate caloric content for each food item                          |
+| `IngredientExtractorTool` | Extracts potential ingredients from meal plan text using regular expressions               |
+
+## Flow Overview
+image
