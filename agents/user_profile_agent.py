@@ -32,7 +32,6 @@ def get_user_profile(user_input: str) -> UserProfile:
     raw_text = response
     print("RAW LLM OUTPUT:\n", raw_text)
 
-    # Βρες το JSON block
     match = re.search(r"\{.*\}", raw_text, re.DOTALL)
     if not match:
         print("Δεν βρέθηκε JSON:\n", raw_text)
@@ -46,5 +45,4 @@ def get_user_profile(user_input: str) -> UserProfile:
         if field not in profile_dict:
             profile_dict[field] = [] if field in ["allergies", "preferences"] else ""
 
-    # Μετά κάνε parse με το καθαρισμένο dict
     return UserProfile(**profile_dict)

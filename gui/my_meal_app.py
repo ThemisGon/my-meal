@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
@@ -5,6 +6,7 @@ from datetime import datetime
 from my_meal.agents.user_profile_agent import get_user_profile
 from my_meal.agents.meal_planner_agent import generate_meal_or_plan
 from my_meal.agents.meal_evaluation_agent import evaluate_meal_plan
+
 
 # Στρογγυλεμένο Πλαίσιο
 def rounded_rectangle(canvas, x1, y1, x2, y2, radius=25, **kwargs):
@@ -134,8 +136,28 @@ def submit():
     if int(calories) < 100 or int(calories) > 3500:
         messagebox.showerror("Error", "Fill in all fields correctly.")
         return
+    if any(item in preferences.lower() for item in allergies.lower().split(",")):
+        messagebox.showerror("Conflict", "Το ίδιο στοιχείο υπάρχει και σε αλλεργία και σε προτίμηση.")
+        return
 
     time_of_day = get_time_of_day() if scope == "next meal" else ""
+
+    def split_text_list(txt):
+        return [x.strip().lower() for x in re.split(r"[,\s]+", txt) if x.strip()]
+
+    allergies_list = split_text_list(allergies)
+    preferences_list = split_text_list(preferences)
+
+    prompt = f"""
+    Στόχος: {goal}
+    Θερμίδες: {calories}
+    Αλλεργίες: {', '.join(allergies_list)}
+    Προτιμήσεις: {', '.join(preferences_list)}
+    Ώρα: {time_of_day}
+    Πλάνο: {scope}
+    Δραστηριότητα: {activity}
+    """
+
 
     prompt = f"""
     Στόχος: {goal}
