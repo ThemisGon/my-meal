@@ -3,6 +3,9 @@ from langchain_core.tools import tool
 
 
 def _extract_ingredients_logic(meal_description: str) -> list:
+    """
+    Extracts ingredients from the provided input data for meal analysis.
+    """
     raw_ingredients = re.split(
         r"[,\-\(\)]|\bwith\b|\bκαι\b|\bσε\b|\bon\b|\bof\b|\bserved\b|\band\b",
         meal_description,
@@ -23,4 +26,5 @@ from langchain_core.tools import tool
 
 @tool
 def extract_ingredients(meal_description: str) -> list:
+    """Extracts ingredients from a meal description for use in LangChain tools."""
     return _extract_ingredients_logic(meal_description)
